@@ -1,91 +1,41 @@
-function speakHint() {
-  const utterance = new SpeechSynthesisUtterance(
-    "Hallo, dies ist ein sprechender Würfel. Drücke eine beliebige Taste oder berühre den Touchscreen mittig, um zu würfeln."
-  );
-  utterance.lang = "de-DE";
-  speechSynthesis.speak(utterance);
-}
 
-// Hinweis direkt beim Start ansagen:
-speakHint();
+const params = new URLSearchParams(window.location.search);
+const word = params.get("text") || "Hallo";
 
-  const speakone = new SpeechSynthesisUtterance(
-    "Eins"
-  );
-  const speaktwo = new SpeechSynthesisUtterance(
-    "Zwei"
-  );
-  const speakthree = new SpeechSynthesisUtterance(
-    "Drei"
-  );
-  const speakfour = new SpeechSynthesisUtterance(
-    "Vier"
-  );
-  const speakfive = new SpeechSynthesisUtterance(
-    "Fünf"
-  );
-  const speaksix = new SpeechSynthesisUtterance(
-    "Sechs"
-  );
-  speakone.lang = "de-DE";
-  speaktwo.lang = "de-DE";
-  speakthree.lang = "de-DE";
-  speakfour.lang = "de-DE";
-  speakfive.lang = "de-DE";
-  speaksix.lang = "de-DE";
+const display = document.createElement("div");
+display.id = "word";
+display.textContent = word;
 
-function roll() {
-    var randNum = Math.floor(Math.random()*6 + 1);
+document.body.appendChild(display);
 
-    var dice = randNum;
+function resizeWord() {
+    const availableWidth = display.clientWidth;
+    const availableHeight = display.clientHeight;
 
-    let button = document.getElementById("dicevalue");
-  
-    switch(dice) {
-      case 1:
-      button.textContent = "1";
-      speechSynthesis.speak(speakone);
-        break;
-      case 2:
-      button.textContent = "2";
-      speechSynthesis.speak(speaktwo);
-        break;
-      case 3:
-      button.textContent = "3";
-      speechSynthesis.speak(speakthree);
-        break;
-      case 4:
-      button.textContent = "4";
-      speechSynthesis.speak(speakfour);
-        break;
-      case 5:
-      button.textContent = "5";
-      speechSynthesis.speak(speakfive);
-        break;
-      case 6:
-      button.textContent = "6";
-      speechSynthesis.speak(speaksix);
-        break;
-      default:
+    let min = 1;
+    let max = 1000;
+    let best = 1;
+
+    while (min <= max) {
+        const size = Math.floor((min + max) / 2);
+
+        display.style.fontSize = size + "px";
+
+        if (
+            display.scrollWidth <= availableWidth &&
+            display.scrollHeight <= availableHeight
+        ) {
+            best = size;
+            min = size + 1;
+        } else {
+            max = size - 1;
+        }
     }
-  let wakeLock = null;
 
-async function keepScreenAwake() {
-  try {
-    if ("wakeLock" in navigator) {
-      wakeLock = await navigator.wakeLock.request("screen");
-      console.log("Wake Lock aktiv");
-    }
-  } catch (err) {
-    console.log("Wake Lock konnte nicht aktiviert werden:", err);
-  }
+    display.style.fontSize = best + "px";
 }
 
-keepScreenAwake();
+window.addEventListener("resize", resizeWord);
 
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") {
-    keepScreenAwake();
-  }
-});
-}
+document.fonts.ready.then(resizeWord);
+resizeWord();
