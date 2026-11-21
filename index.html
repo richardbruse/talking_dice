@@ -1,0 +1,16 @@
+ <html>
+	 <head>
+		 <link rel="stylesheet" href="style.css">
+		 <script src="script.js"></script>
+	 </head>
+	<body style="background: black;">
+    <p class:"hint">Hallo, dies ist ein sprechender Würfel. Drücke eine beliebige Taste oder berühre den Touchscreen mittig, um zu würfeln.</p>
+		<button id="dicevalue" onclick="roll()" style="width:100%;height:100%;font-size: 30rem;background:black;color: white;">würfeln</button>
+	</body>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelector("button").focus();
+    });
+    document.addEventListener("keydown", () => roll());
+  </script>
+</html>
